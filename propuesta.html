@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propuesta de Desarrollo Web — YEGUA STUDIO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;0,6..96,900;1,6..96,400;1,6..96,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --yellow: #F4D03F;
+      --dark-red: #8B0000;
+      --ink: #0a0504;
+      --cream: #f4ead6;
+      --cream-muted: #e8dcc4;
+    }
+
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      background: var(--ink);
+      color: var(--cream);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 45px 55px;
+      position: relative;
+      background: var(--ink);
+      overflow: hidden;
+      page-break-after: always;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    /* Film grain overlay */
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .page > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Decorative film strip borders */
+    .film-border-left,
+    .film-border-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 18px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      opacity: 0.08;
+    }
+
+    .film-border-left { left: 8px; }
+    .film-border-right { right: 8px; }
+
+    .film-hole {
+      width: 10px;
+      height: 7px;
+      border: 1px solid var(--cream);
+      border-radius: 1px;
+    }
+
+    /* Corner marks */
+    .corner-mark {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      z-index: 2;
+      opacity: 0.12;
+    }
+    .corner-mark.tl { top: 25px; left: 30px; border-top: 1px solid var(--yellow); border-left: 1px solid var(--yellow); }
+    .corner-mark.tr { top: 25px; right: 30px; border-top: 1px solid var(--yellow); border-right: 1px solid var(--yellow); }
+    .corner-mark.bl { bottom: 25px; left: 30px; border-bottom: 1px solid var(--yellow); border-left: 1px solid var(--yellow); }
+    .corner-mark.br { bottom: 25px; right: 30px; border-bottom: 1px solid var(--yellow); border-right: 1px solid var(--yellow); }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-family: 'Bodoni Moda', 'Didot', Georgia, serif;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      font-size: 42px;
+      line-height: 1.1;
+      color: var(--cream);
+    }
+
+    h2 {
+      font-size: 22px;
+      color: var(--yellow);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      position: relative;
+      padding-bottom: 12px;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background: var(--dark-red);
+    }
+
+    h3 {
+      font-size: 17px;
+      color: var(--cream);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--cream-muted);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      opacity: 0.9;
+    }
+
+    /* Separator */
+    .separator {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--dark-red) 20%, var(--dark-red) 80%, transparent);
+      margin: 25px 0;
+      opacity: 0.5;
+    }
+
+    .separator-thin {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,208,63,0.15) 20%, rgba(244,208,63,0.15) 80%, transparent);
+      margin: 15px 0;
+    }
+
+    /* Lists */
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 7px 0 7px 28px;
+      position: relative;
+      font-size: 14px;
+      color: var(--cream-muted);
+      line-height: 1.5;
+      border-bottom: 1px solid rgba(244,234,214,0.04);
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+
+    .feature-list li::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 14px;
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--yellow);
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    .feature-list li strong {
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    /* Pricing table */
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0 20px;
+    }
+
+    .pricing-table tr {
+      border-bottom: 1px solid rgba(244,234,214,0.08);
+    }
+
+    .pricing-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .pricing-table td {
+      padding: 14px 16px;
+      vertical-align: middle;
+    }
+
+    .pricing-table td:first-child {
+      font-size: 14.5px;
+      color: var(--cream-muted);
+      width: 60%;
+    }
+
+    .pricing-table td:last-child {
+      text-align: right;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    .pricing-table .label-small {
+      display: block;
+      font-size: 11px;
+      color: rgba(244,234,214,0.4);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      margin-top: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    .pricing-highlight {
+      background: rgba(244,208,63,0.04);
+      border-left: 3px solid var(--dark-red);
+    }
+
+    .pricing-free {
+      color: #4CAF50 !important;
+    }
+
+    /* Note boxes */
+    .note-box {
+      background: rgba(244,208,63,0.03);
+      border: 1px solid rgba(244,208,63,0.1);
+      border-left: 3px solid var(--dark-red);
+      padding: 18px 22px;
+      margin: 18px 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .note-box p {
+      margin-bottom: 6px;
+      font-size: 13.5px;
+    }
+
+    .note-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Timeline */
+    .timeline {
+      padding-left: 0;
+      list-style: none;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: linear-gradient(180deg, var(--dark-red), var(--yellow));
+      opacity: 0.4;
+    }
+
+    .timeline li {
+      padding: 10px 0 10px 42px;
+      position: relative;
+    }
+
+    .timeline li::before {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 16px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--yellow);
+      border-radius: 50%;
+      background: var(--ink);
+      z-index: 1;
+    }
+
+    .timeline .step-label {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      opacity: 0.7;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .timeline .step-title {
+      font-size: 15px;
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    /* Guarantee box */
+    .guarantee-box {
+      background: linear-gradient(135deg, rgba(139,0,0,0.08), rgba(244,208,63,0.04));
+      border: 1px solid rgba(139,0,0,0.25);
+      padding: 22px 26px;
+      margin: 20px 0;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .guarantee-box h3 {
+      color: var(--yellow);
+      font-size: 16px;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .guarantee-box p {
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      padding-top: 30px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 15px;
+      border-top: 1px solid rgba(244,234,214,0.08);
+    }
+
+    .footer-left {
+      font-size: 12px;
+      color: rgba(244,234,214,0.35);
+      line-height: 1.7;
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-brand {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 13px;
+      color: var(--yellow);
+      opacity: 0.5;
+      letter-spacing: 0.08em;
+    }
+
+    .footer-url {
+      font-size: 11px;
+      color: rgba(244,234,214,0.3);
+      letter-spacing: 0.05em;
+    }
+
+    /* Page number */
+    .page-number {
+      position: absolute;
+      bottom: 25px;
+      right: 55px;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 11px;
+      color: rgba(244,234,214,0.2);
+      letter-spacing: 0.1em;
+    }
+
+    /* Header page specific styles */
+    .header-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .header-page .brand-name {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 62px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: var(--cream);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .header-page .brand-tagline {
+      font-size: 13px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      opacity: 0.6;
+      margin-bottom: 55px;
+    }
+
+    .header-page .doc-title {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--cream);
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .header-page .doc-date {
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(244,234,214,0.4);
+    }
+
+    .header-decoration {
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--dark-red), transparent);
+      margin: 30px auto;
+    }
+
+    .header-decoration-2 {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+      margin: 18px auto;
+      opacity: 0.4;
+    }
+
+    /* Conditions list */
+    .conditions-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .conditions-list li {
+      padding: 12px 0 12px 20px;
+      position: relative;
+      font-size: 14px;
+      color: var(--cream-muted);
+      border-bottom: 1px solid rgba(244,234,214,0.04);
+    }
+
+    .conditions-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18px;
+      width: 8px;
+      height: 1px;
+      background: var(--yellow);
+      opacity: 0.5;
+    }
+
+    .conditions-list li strong {
+      color: var(--cream);
+    }
+
+    /* Ticker strip */
+    .ticker-strip {
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 8px 0;
+      margin: 20px -55px;
+      background: rgba(139,0,0,0.1);
+      border-top: 1px solid rgba(139,0,0,0.2);
+      border-bottom: 1px solid rgba(139,0,0,0.2);
+    }
+
+    .ticker-text {
+      display: inline-block;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      opacity: 0.2;
+    }
+
+    /* Two columns */
+    .two-col {
+      display: flex;
+      gap: 30px;
+    }
+
+    .two-col > div {
+      flex: 1;
+    }
+
+    @media print {
+      body { background: var(--ink); }
+      .page {
+        margin: 0;
+        padding: 45px 55px;
+        box-shadow: none;
+      }
+    }
+
+    @media screen {
+      .page {
+        margin: 20px auto;
+        box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PAGE 1 — COVER ==================== -->
+  <div class="page header-page">
+    <div class="film-border-left">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="film-border-right">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="corner-mark tl"></div>
+    <div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div>
+    <div class="corner-mark br"></div>
+
+    <div class="brand-name">YEGUA STUDIO</div>
+    <div class="brand-tagline">Cinema-Inspired Clothing</div>
+
+    <div class="header-decoration"></div>
+
+    <div class="doc-title">Propuesta de Desarrollo Web</div>
+    <div class="header-decoration-2"></div>
+    <div class="doc-date">Abril 2026</div>
+
+    <div class="ticker-strip" style="position: absolute; bottom: 80px; left: 0; right: 0;">
+      <span class="ticker-text">
+        &nbsp;&nbsp;&bull;&nbsp;&nbsp;Dise&ntilde;o &amp; Desarrollo&nbsp;&nbsp;&bull;&nbsp;&nbsp;E-Commerce&nbsp;&nbsp;&bull;&nbsp;&nbsp;Tienda Online&nbsp;&nbsp;&bull;&nbsp;&nbsp;Identidad Visual&nbsp;&nbsp;&bull;&nbsp;&nbsp;Experiencia Cinematogr&aacute;fica&nbsp;&nbsp;&bull;&nbsp;&nbsp;Dise&ntilde;o &amp; Desarrollo&nbsp;&nbsp;&bull;&nbsp;&nbsp;E-Commerce&nbsp;&nbsp;&bull;&nbsp;&nbsp;Tienda Online&nbsp;&nbsp;&bull;&nbsp;&nbsp;Identidad Visual&nbsp;&nbsp;&bull;&nbsp;&nbsp;Experiencia Cinematogr&aacute;fica&nbsp;&nbsp;&bull;&nbsp;&nbsp;Dise&ntilde;o &amp; Desarrollo&nbsp;&nbsp;&bull;&nbsp;&nbsp;E-Commerce&nbsp;&nbsp;&bull;&nbsp;&nbsp;Tienda Online&nbsp;&nbsp;
+      </span>
+    </div>
+
+    <div class="page-number">01</div>
+  </div>
+
+  <!-- ==================== PAGE 2 — SOBRE EL PROYECTO + FEATURES ==================== -->
+  <div class="page">
+    <div class="film-border-left">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="film-border-right">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="corner-mark tl"></div>
+    <div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div>
+    <div class="corner-mark br"></div>
+
+    <h2>Sobre el Proyecto</h2>
+
+    <p>
+      Proponemos diseñar y desarrollar un sitio web e-commerce a medida para <strong style="color: var(--cream);">Yegua Studio</strong>,
+      la marca de indumentaria con identidad cinematográfica fundada por Ailén Rausch y Emilia Salto en Córdoba, Argentina.
+    </p>
+    <p>
+      La propuesta contempla una experiencia digital que capture la esencia visual y narrativa de la marca:
+      cine, textura, moda y actitud. Un espacio donde cada colección se viva como una película,
+      cada producto cuente una historia, y la experiencia de compra sea tan cuidada como el diseño de cada prenda.
+    </p>
+
+    <div class="separator"></div>
+
+    <h2>Qué incluye la propuesta</h2>
+
+    <ul class="feature-list">
+      <li><strong>Diseño y desarrollo de landing page + tienda online</strong> — sitio completo con identidad visual propia</li>
+      <li><strong>Diseño responsive</strong> — adaptado a mobile, tablet y desktop</li>
+      <li><strong>Cartelera de cápsulas y colecciones</strong> — con sistema de navegación intuitivo</li>
+      <li><strong>Catálogo de productos</strong> — con fotos, talles, precios y descripciones</li>
+      <li><strong>Carrito de compras y checkout</strong> — flujo de compra completo y seguro</li>
+      <li><strong>Calculadora de envíos</strong> — cálculo automático por código postal</li>
+      <li><strong>Integración de medios de pago</strong> — tarjeta crédito/débito, transferencia bancaria, MercadoPago</li>
+      <li><strong>Panel de administración</strong> — para gestionar productos, precios, stock, colecciones y contenido</li>
+      <li><strong>Botón flotante de WhatsApp</strong> — para atención directa al cliente</li>
+      <li><strong>Cursor personalizado</strong> — hacha cinematográfica (referencia a Pearl)</li>
+      <li><strong>Efectos cinematográficos</strong> — grano de película, ticker animado, transiciones de escena</li>
+      <li><strong>Hosting, SSL y dominio</strong> — incluidos en el servicio</li>
+      <li><strong>Soporte técnico continuo</strong> — resolución de incidencias y consultas</li>
+    </ul>
+
+    <div class="page-number">02</div>
+  </div>
+
+  <!-- ==================== PAGE 3 — NOTA IMPORTANTE + PRESUPUESTO ==================== -->
+  <div class="page">
+    <div class="film-border-left">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="film-border-right">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="corner-mark tl"></div>
+    <div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div>
+    <div class="corner-mark br"></div>
+
+    <h2>Importante</h2>
+    <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow); opacity: 0.6; margin-bottom: 15px;">Sobre el ejemplo adjunto</p>
+
+    <div class="note-box">
+      <p>El link de ejemplo que acompaña esta propuesta es <strong style="color: var(--cream);">meramente ilustrativo y de referencia</strong>.</p>
+      <p>Se trata de un prototipo solo frontend: no tiene funcionalidades reales trabajando por detrás (ni carrito, ni pagos, ni panel de administración).</p>
+      <p>Estamos completamente abiertos a <strong style="color: var(--cream);">cambios en diseño, estética, estructura y contenido</strong>. Se pueden sumar más implementaciones gráficas y funcionales según las necesidades de la marca.</p>
+      <p>El diseño final será <strong style="color: var(--cream);">trabajado en conjunto con las fundadoras</strong>, contemplando revisiones y ajustes hasta lograr la conformidad total.</p>
+    </div>
+
+    <div class="separator"></div>
+
+    <h2>Presupuesto</h2>
+
+    <table class="pricing-table">
+      <tr class="pricing-highlight">
+        <td>
+          <strong style="color: var(--cream);">Implementación completa</strong>
+          <span class="label-small">Diseño + desarrollo + puesta en marcha &bull; pago único</span>
+        </td>
+        <td>USD 200</td>
+      </tr>
+      <tr>
+        <td>
+          <strong style="color: var(--cream);">Mantenimiento mensual</strong>
+          <span class="label-small">Hosting, SSL, soporte técnico, actualizaciones menores</span>
+        </td>
+        <td>USD 20<span class="label-small" style="display: inline; font-size: 13px;">/mes</span></td>
+      </tr>
+      <tr>
+        <td>
+          <strong style="color: var(--cream);">Comisión por ventas</strong>
+          <span class="label-small">Sin recargo sobre las ventas de la tienda</span>
+        </td>
+        <td class="pricing-free" style="color: #4CAF50 !important;">0%</td>
+      </tr>
+    </table>
+
+    <div class="separator"></div>
+
+    <h2>Condiciones</h2>
+
+    <ul class="conditions-list">
+      <li>
+        <strong>Período de prueba:</strong> 14 días (2 semanas) para evaluar el producto terminado antes de comprometerse.
+      </li>
+      <li>
+        <strong>Garantía de conformidad:</strong> Si no están conformas con el resultado final, se reintegra el <strong style="color: var(--yellow);">80% del costo de implementación</strong>.
+      </li>
+      <li>
+        <strong>Sin permanencia:</strong> El mantenimiento mensual se puede cancelar en cualquier momento, sin penalidad.
+      </li>
+    </ul>
+
+    <div class="guarantee-box">
+      <h3>Garantía de Satisfacción</h3>
+      <p>Trabajamos hasta que el resultado las represente. Si no están conformas, devolvemos el 80% de la implementación.</p>
+    </div>
+
+    <div class="page-number">03</div>
+  </div>
+
+  <!-- ==================== PAGE 4 — PROCESO + FOOTER ==================== -->
+  <div class="page" style="display: flex; flex-direction: column;">
+    <div class="film-border-left">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="film-border-right">
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="corner-mark tl"></div>
+    <div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div>
+    <div class="corner-mark br"></div>
+
+    <h2>Proceso de Trabajo</h2>
+
+    <p style="margin-bottom: 20px;">
+      El desarrollo se organiza en cinco etapas claras, con puntos de revisión y aprobación en cada una para asegurar que el resultado final refleje la visión de la marca.
+    </p>
+
+    <ol class="timeline">
+      <li>
+        <span class="step-label">Etapa 1</span>
+        <span class="step-title">Diseño y aprobación del mockup</span>
+        <p style="font-size: 13px; margin-top: 4px;">Boceto visual de la estructura, paleta, tipografías y flujo de navegación. Se presenta para aprobación antes de escribir una línea de código.</p>
+      </li>
+      <li>
+        <span class="step-label">Etapa 2</span>
+        <span class="step-title">Desarrollo frontend + backend</span>
+        <p style="font-size: 13px; margin-top: 4px;">Construcción del sitio completo: interfaz visual, lógica de tienda, carrito, pagos, panel de administración y efectos cinematográficos.</p>
+      </li>
+      <li>
+        <span class="step-label">Etapa 3</span>
+        <span class="step-title">Carga de productos y contenido</span>
+        <p style="font-size: 13px; margin-top: 4px;">Alta de productos con fotos, descripciones, talles y precios. Configuración de colecciones y contenido editorial.</p>
+      </li>
+      <li>
+        <span class="step-label">Etapa 4</span>
+        <span class="step-title">Testing y ajustes</span>
+        <p style="font-size: 13px; margin-top: 4px;">Pruebas completas de funcionalidad, pagos, envíos, responsive y performance. Ajustes según feedback de las fundadoras.</p>
+      </li>
+      <li>
+        <span class="step-label">Etapa 5</span>
+        <span class="step-title">Lanzamiento</span>
+        <p style="font-size: 13px; margin-top: 4px;">Puesta en producción, configuración de dominio, SSL y monitoreo inicial. Arranque del período de prueba de 14 días.</p>
+      </li>
+    </ol>
+
+    <div class="footer" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;">
+      <div class="separator" style="margin-bottom: 20px;"></div>
+
+      <div style="text-align: center; margin-bottom: 25px;">
+        <p style="font-size: 13px; color: rgba(244,234,214,0.4); letter-spacing: 0.08em;">
+          Esta propuesta tiene una validez de <strong style="color: var(--cream-muted);">30 días</strong> a partir de la fecha de emisión.
+        </p>
+      </div>
+
+      <div class="footer-content">
+        <div class="footer-left">
+          Abril 2026<br>
+          Córdoba, Argentina<br>
+          Propuesta preparada para Ailén Rausch &amp; Emilia Salto
+        </div>
+        <div class="footer-right">
+          <div class="footer-brand">IA A MEDIDA</div>
+          <div class="footer-url">iaamedida.com</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-number">04</div>
+  </div>
+
+</body>
+</html>
